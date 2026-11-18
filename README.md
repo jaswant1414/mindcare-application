@@ -7,7 +7,11 @@ Build a fully interactive, mobile-first Progressive Web App (PWA) prototype name
 - **Typography & Layout:** Extra-large fonts (minimum body text 18px, headers 28px+), oversized touch targets (minimum 64px height), and clutter-free "One Card per Screen" layout to prevent cognitive overload.
 - **Navigation Bar:** Simple bottom tab bar with 3 icons/labels: 🎮 "Play & Learn", ⏰ "Daily Reminders", and 📊 "Caregiver Dashboard".
 
-### 2. Feature 1: Working Game Module — "Look & Speak: NER Object Recall"
+### 2. Cognitive Games & Expansion Roadmap
+- **Current Live Module:** *"Look & Speak: NER Object Recall"* (Voice & Touch recognition for cultural items like Japi Hat, Lal Cha, Gamosa, and Bamboo Basket).
+- **Expansion Portfolio:** See [GAME_CONCEPTS_AND_ROADMAP.md](./GAME_CONCEPTS_AND_ROADMAP.md) for 5 additional clinically backed games (Sound & Melody of Home, Market Basket Sorting, Weave & Match, Folk Rhyme Completion, Daily Routine Story Chain) and errorless learning guidelines.
+
+### 3. Feature 1: Working Game Module — "Look & Speak: NER Object Recall"
 - **Gameplay Flow:** 
   - Displays a single, massive, crystal-clear high-contrast card showing a familiar North-East cultural item or daily object (e.g., "Japi Hat", "Lal Cha (Red Tea Glass)", "Traditional Gamosa", or "Bamboo Basket").
   - Speaks a warm voice prompt aloud using `window.speechSynthesis` (e.g., "Idhu enna-nu sollunga paapom?" / "Can you name this item?").
