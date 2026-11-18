@@ -40,15 +40,7 @@ Build a fully interactive, mobile-first Progressive Web App (PWA) prototype name
 - Implement state management using React `useState` and `useEffect` so game rounds advance smoothly, scores update live, and reminder checkboxes persist in browser local storage.
 - Ensure fully responsive mobile layout that looks and feels like a native Android tablet/smartphone app.
 
-This project was built with [Lovable](https://lovable.dev).
 
-## Build with Lovable
-
-Continue developing this project in the [Lovable editor](https://lovable.dev/projects/2e46ba88-a05f-4a5d-bead-c139f2e8c0b2).
-
-- **Ship faster**: describe what you want to build and Lovable handles the code.
-- **Stay in sync**: every change made in Lovable is committed straight to this repository.
-- **Full ownership**: this code is yours. Push to `main` on GitLab and your changes sync back into Lovable, ready for your next prompt.
 
 ## Development
 
