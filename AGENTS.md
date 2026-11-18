@@ -28,3 +28,7 @@ use the editor.
   own key and store it in Secrets.
 - **Secrets.** Lovable manages them. Do not put secret values in the repo.
 <!-- LOVABLE:END -->
+
+## MindCare NER structure
+
+- Keep the companion as a local-first single-screen experience with tabbed views and generated static assets; this supports offline use without collecting personal data.
