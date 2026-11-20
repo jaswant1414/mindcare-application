@@ -11,10 +11,12 @@ export type FamilyVoiceItem = {
   id: string;
   name: string;
   relation: string;
+  description?: string;
   prompt: string;
   hint: string;
   aliases: string[];
   audioData?: string;
+  audioFileName?: string;
   speechPitch?: number;
 };
 
@@ -23,6 +25,7 @@ export const DEFAULT_FAMILY_VOICES: FamilyVoiceItem[] = [
     id: "priya-granddaughter",
     name: "Priya",
     relation: "Granddaughter",
+    description: "Your eldest granddaughter who loves making fresh morning tea for you and visits every Sunday.",
     prompt: "Good morning Dadu! Have you had your warm cup of morning tea?",
     hint: "She is your granddaughter who loves visiting and making tea for you.",
     aliases: ["priya", "granddaughter", "grand daughter", "natni", "nati"],
@@ -32,6 +35,7 @@ export const DEFAULT_FAMILY_VOICES: FamilyVoiceItem[] = [
     id: "rahul-son",
     name: "Rahul",
     relation: "Son",
+    description: "Your caring son who calls every afternoon to check on your health and gentle evening walk.",
     prompt: "Namaste Baba! Did you go for your gentle afternoon walk today?",
     hint: "Your loving son who always checks in on your daily walk.",
     aliases: ["rahul", "son", "beta", "putra"],
@@ -41,6 +45,7 @@ export const DEFAULT_FAMILY_VOICES: FamilyVoiceItem[] = [
     id: "ananya-daughter",
     name: "Ananya",
     relation: "Daughter",
+    description: "Your younger daughter who loves bringing you homemade traditional sweets on weekends.",
     prompt: "Hello Ma! I am preparing your favourite sweet dish for this weekend.",
     hint: "Your caring daughter who loves bringing home-cooked sweets.",
     aliases: ["ananya", "daughter", "beti", "jiya"],

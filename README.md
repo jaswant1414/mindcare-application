@@ -15,9 +15,10 @@ Build a fully interactive, mobile-first Progressive Web App (PWA) prototype name
   - Zero-failure feedback loop with 7-second gentle audio clues.
 - **Module 2: "Family Voices Recall":**
   - Dedicated navigation tab with custom family member voice greetings and questions.
-  - **Caregiver Voice Studio:** Family members can record real audio messages using their microphone or customize synthetic greetings.
-  - **Memory Gameplay ("Who is speaking to you?"):** Plays the recorded voice, allowing the elder to recognize their loved one by voice input or tapping large avatar cards.
-  - 100% private: Audio recordings are stored in client-side browser storage (Zero cloud/PII upload).
+  - **Caregiver Voice Studio:** Family members can either **upload audio files** (MP3, WAV, M4A from WhatsApp/voice notes) or **record live with their microphone**.
+  - **Memory Description & Story Context:** Add rich descriptions and relationship context to each voice, which are used as gentle hints and reminiscence cues during gameplay.
+  - **Memory Gameplay ("Who is speaking to you?"):** Plays the recorded or uploaded voice, allowing the elder to recognize their loved one by voice input or tapping large avatar cards.
+  - 100% private: Audio clips are stored in client-side browser storage (Zero cloud/PII upload).
 
 ### 3. Feature 2: Voice & Visual Daily Care Reminders
 - A dedicated tab showing large, visual reminder cards for daily routines:

@@ -362,12 +362,22 @@
 .manage-form-grid { display: grid; gap: 12px; margin-bottom: 16px; }
 .manage-input-row label { display: block; font-size: 13px; font-weight: 800; color: var(--care-navy); margin-bottom: 4px; }
 .manage-input { width: 100%; min-height: 44px; padding: 8px 12px; border-radius: 10px; border: 1px solid var(--border); background: var(--background); font-size: 15px; font-weight: 700; color: var(--care-navy); }
+.manage-textarea { width: 100%; min-height: 72px; padding: 10px 12px; border-radius: 10px; border: 1px solid var(--border); background: var(--background); font-size: 14px; font-weight: 600; color: var(--care-navy); resize: vertical; font-family: inherit; }
+.manage-hint-sub { font-size: 12px; color: var(--muted-foreground); font-weight: 600; margin-top: 4px; }
+.audio-mode-selector { display: flex; gap: 8px; margin-bottom: 10px; }
+.audio-mode-btn { min-height: 40px; padding: 0 14px; border-radius: 9px; font-size: 13px; font-weight: 800; border: 1px solid var(--border); background: var(--background); color: var(--muted-foreground); cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
+.audio-mode-btn.is-active { background: var(--care-navy); color: #fff; border-color: var(--care-navy); }
+.audio-status-chip { display: flex; align-items: center; gap: 10px; padding: 8px 14px; border-radius: 10px; background: var(--care-sky); border: 1px solid color-mix(in oklab, var(--care-blue) 25%, transparent); color: var(--care-navy); font-size: 13px; font-weight: 800; margin-top: 10px; }
+.audio-status-chip strong { color: var(--care-blue); }
 .record-controls-row { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-top: 8px; }
 .record-btn { min-height: 48px; padding: 0 18px; border-radius: 11px; font-size: 14px; font-weight: 900; display: inline-flex; align-items: center; gap: 8px; cursor: pointer; }
 .record-btn-active { background: var(--care-red); color: white; animation: mic-pulse 1s infinite; }
 .voice-item-list { display: grid; gap: 10px; margin-top: 16px; }
-.voice-item-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 12px 14px; background: var(--background); border-radius: 12px; }
+.voice-item-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; padding: 14px; background: var(--background); border-radius: 12px; }
+.voice-item-detail { min-width: 0; flex: 1; }
 .voice-item-detail strong { display: block; font-size: 15px; font-weight: 900; color: var(--care-navy); }
+.voice-item-detail span { display: block; font-size: 12px; color: var(--muted-foreground); font-weight: 700; margin-top: 2px; }
+.voice-item-desc { font-size: 13px; color: var(--care-navy); font-weight: 650; margin-top: 4px; padding-left: 8px; border-left: 2px solid var(--care-green); line-height: 1.35; }
 .voice-item-detail span { font-size: 12px; color: var(--muted-foreground); font-weight: 700; }
 
 .bottom-nav { position: fixed; z-index: 30; right: 0; bottom: 0; left: 0; min-height: calc(82px + env(safe-area-inset-bottom)); display: grid; grid-template-columns: repeat(4, 1fr); padding: 7px max(8px, env(safe-area-inset-right)) calc(7px + env(safe-area-inset-bottom)) max(8px, env(safe-area-inset-left)); background: color-mix(in oklab, var(--card) 96%, transparent); border-top: 1px solid var(--border); backdrop-filter: blur(18px); }

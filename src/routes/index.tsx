@@ -6,6 +6,7 @@ import {
   Check,
   CheckCircle2,
   Clock3,
+  FileAudio,
   Footprints,
   HeartHandshake,
   Info,
@@ -19,10 +20,12 @@ import {
   Square,
   Sun,
   Trash2,
+  Upload,
   UserCheck,
   Users,
   Volume2,
   Waves,
+  X,
 } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 
@@ -190,12 +193,15 @@ function MindCare() {
   const [isVoiceListening, setIsVoiceListening] = useState(false);
   const [isManagingVoices, setIsManagingVoices] = useState(false);
 
-  // Family Voice Recording state
+  // Family Voice Recording & Upload state
   const [newMemberName, setNewMemberName] = useState("");
   const [newMemberRelation, setNewMemberRelation] = useState("");
+  const [newMemberDesc, setNewMemberDesc] = useState("");
   const [newMemberPrompt, setNewMemberPrompt] = useState("");
+  const [audioMode, setAudioMode] = useState<"upload" | "record">("upload");
   const [isRecordingAudio, setIsRecordingAudio] = useState(false);
   const [recordedAudioUrl, setRecordedAudioUrl] = useState<string | null>(null);
+  const [audioFileName, setAudioFileName] = useState<string | null>(null);
   const [recordingSeconds, setRecordingSeconds] = useState(0);
 
   // Reminders and session data
@@ -217,6 +223,7 @@ function MindCare() {
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
   const recordIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const dayKey = localDayKey();
   const currentItem = objects[roundIndex % objects.length] ?? objects[0]!;
@@ -469,7 +476,7 @@ function MindCare() {
   // Audio Recording for Custom Family Voice
   const startRecordingAudio = async () => {
     if (typeof navigator === "undefined" || !navigator.mediaDevices?.getUserMedia) {
-      alert("Microphone recording is not supported on this device. You can still save the greeting with voice simulation.");
+      alert("Microphone recording is not supported on this device. You can still save the greeting with voice simulation or upload an audio file.");
       return;
     }
 
@@ -485,6 +492,7 @@ function MindCare() {
         const reader = new FileReader();
         reader.onloadend = () => {
           setRecordedAudioUrl(reader.result as string);
+          setAudioFileName(null);
         };
         reader.readAsDataURL(blob);
         stream.getTracks().forEach((track) => track.stop());
@@ -511,19 +519,52 @@ function MindCare() {
     }
   };
 
+  const handleAudioFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    if (file.size > 10 * 1024 * 1024) {
+      alert("Audio file is larger than 10MB. Please choose a smaller audio file.");
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setRecordedAudioUrl(reader.result as string);
+      setAudioFileName(file.name);
+      setIsRecordingAudio(false);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const clearAudio = () => {
+    setRecordedAudioUrl(null);
+    setAudioFileName(null);
+    setIsRecordingAudio(false);
+    setRecordingSeconds(0);
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  };
+
   const handleSaveCustomVoice = () => {
     if (!newMemberName.trim()) return;
+
+    const hintText = newMemberDesc.trim()
+      ? newMemberDesc.trim()
+      : `This is your loving ${newMemberRelation.trim() || "family member"} ${newMemberName.trim()}.`;
+
     const newVoice: FamilyVoiceItem = {
       id: `voice-${Date.now()}`,
       name: newMemberName.trim(),
       relation: newMemberRelation.trim() || "Family Member",
+      description: newMemberDesc.trim() || undefined,
       prompt: newMemberPrompt.trim() || `Hello! It is ${newMemberName.trim()} speaking to you!`,
-      hint: `This is your loving ${newMemberRelation.trim() || "family member"} ${newMemberName.trim()}.`,
+      hint: hintText,
       aliases: [
         newMemberName.toLowerCase().trim(),
         newMemberRelation.toLowerCase().trim(),
       ].filter(Boolean),
       audioData: recordedAudioUrl || undefined,
+      audioFileName: audioFileName || undefined,
       speechPitch: 1.05,
     };
     const updated = [...safeVoiceList, newVoice];
@@ -531,9 +572,12 @@ function MindCare() {
     saveFamilyVoices(updated);
     setNewMemberName("");
     setNewMemberRelation("");
+    setNewMemberDesc("");
     setNewMemberPrompt("");
     setRecordedAudioUrl(null);
+    setAudioFileName(null);
     setRecordingSeconds(0);
+    if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
   const handleDeleteVoice = (id: string) => {
@@ -770,11 +814,11 @@ function MindCare() {
             {isManagingVoices ? (
               <div className="voice-management-panel">
                 <h2>Record &amp; Add Family Voices</h2>
-                <p className="sub">Record real family member voices so your loved one can hear them anytime.</p>
+                <p className="sub">Upload or record audio from family members and add loving context so your elder remembers their voice.</p>
 
                 <div className="manage-form-grid">
                   <div className="manage-input-row">
-                    <label htmlFor="member-name">Family Member’s Name</label>
+                    <label htmlFor="member-name">Family Member’s Name *</label>
                     <input
                       id="member-name"
                       type="text"
@@ -798,59 +842,135 @@ function MindCare() {
                   </div>
 
                   <div className="manage-input-row">
-                    <label htmlFor="member-prompt">Voice Greeting / Question</label>
+                    <label htmlFor="member-desc">Memory Description &amp; Story Context</label>
+                    <textarea
+                      id="member-desc"
+                      className="manage-textarea"
+                      placeholder="e.g., Your eldest granddaughter who calls you Dadu and visits every Sunday to share sweet tea."
+                      value={newMemberDesc}
+                      onChange={(e) => setNewMemberDesc(e.target.value)}
+                    />
+                    <p className="manage-hint-sub">This story gives your loved one comforting context and acts as a gentle clue during memory practice.</p>
+                  </div>
+
+                  <div className="manage-input-row">
+                    <label htmlFor="member-prompt">Voice Greeting / Spoken Phrase</label>
                     <input
                       id="member-prompt"
                       type="text"
                       className="manage-input"
-                      placeholder="e.g., Good morning Dadu! Have you had your tea?"
+                      placeholder="e.g., Good morning Dadu! Have you had your morning tea?"
                       value={newMemberPrompt}
                       onChange={(e) => setNewMemberPrompt(e.target.value)}
                     />
                   </div>
                 </div>
 
-                <div className="record-controls-row">
-                  {isRecordingAudio ? (
-                    <Button
+                <div style={{ marginTop: "14px" }}>
+                  <label style={{ display: "block", fontSize: "13px", fontWeight: "800", color: "var(--care-navy)", marginBottom: "6px" }}>
+                    Voice Audio: Upload Audio File or Record Live
+                  </label>
+
+                  <div className="audio-mode-selector">
+                    <button
                       type="button"
-                      className="record-btn record-btn-active"
-                      onClick={stopRecordingAudio}
+                      className={`audio-mode-btn${audioMode === "upload" ? " is-active" : ""}`}
+                      onClick={() => setAudioMode("upload")}
                     >
-                      <Square size={18} />
-                      <span>Stop recording ({recordingSeconds}s)</span>
-                    </Button>
-                  ) : (
-                    <Button
+                      <Upload size={16} />
+                      <span>Upload Voice File</span>
+                    </button>
+                    <button
                       type="button"
-                      className="record-btn"
-                      variant="outline"
-                      onClick={startRecordingAudio}
+                      className={`audio-mode-btn${audioMode === "record" ? " is-active" : ""}`}
+                      onClick={() => setAudioMode("record")}
                     >
-                      <Mic size={18} />
-                      <span>{recordedAudioUrl ? "Re-record voice" : "Record voice (Microphone)"}</span>
-                    </Button>
+                      <Mic size={16} />
+                      <span>Record with Microphone</span>
+                    </button>
+                  </div>
+
+                  {audioMode === "upload" && (
+                    <div style={{ marginTop: "8px" }}>
+                      <input
+                        ref={fileInputRef}
+                        type="file"
+                        accept="audio/*,.mp3,.wav,.m4a,.aac,.ogg,.webm"
+                        style={{ display: "none" }}
+                        onChange={handleAudioFileUpload}
+                      />
+                      <Button
+                        type="button"
+                        variant="outline"
+                        className="record-btn"
+                        onClick={() => fileInputRef.current?.click()}
+                      >
+                        <FileAudio size={18} />
+                        <span>{audioFileName ? `Change file (${audioFileName})` : "Select audio file (.mp3, .wav, .m4a)"}</span>
+                      </Button>
+                    </div>
+                  )}
+
+                  {audioMode === "record" && (
+                    <div className="record-controls-row">
+                      {isRecordingAudio ? (
+                        <Button
+                          type="button"
+                          className="record-btn record-btn-active"
+                          onClick={stopRecordingAudio}
+                        >
+                          <Square size={18} />
+                          <span>Stop recording ({recordingSeconds}s)</span>
+                        </Button>
+                      ) : (
+                        <Button
+                          type="button"
+                          className="record-btn"
+                          variant="outline"
+                          onClick={startRecordingAudio}
+                        >
+                          <Mic size={18} />
+                          <span>{recordedAudioUrl && !audioFileName ? "Re-record voice" : "Tap to record voice"}</span>
+                        </Button>
+                      )}
+                    </div>
                   )}
 
                   {recordedAudioUrl && (
-                    <Button
-                      type="button"
-                      variant="secondary"
-                      className="record-btn"
-                      onClick={() => {
-                        const testAudio = new Audio(recordedAudioUrl);
-                        testAudio.play().catch(() => {});
-                      }}
-                    >
-                      <Volume2 size={18} />
-                      <span>Test playback</span>
-                    </Button>
+                    <div className="audio-status-chip">
+                      <FileAudio size={18} />
+                      <span>
+                        Audio ready: <strong>{audioFileName ? audioFileName : `Recorded clip (${recordingSeconds}s)`}</strong>
+                      </span>
+                      <Button
+                        type="button"
+                        variant="secondary"
+                        size="sm"
+                        style={{ marginLeft: "auto" }}
+                        onClick={() => {
+                          const testAudio = new Audio(recordedAudioUrl);
+                          testAudio.play().catch(() => {});
+                        }}
+                      >
+                        <Volume2 size={15} /> Test
+                      </Button>
+                      <button
+                        type="button"
+                        onClick={clearAudio}
+                        title="Remove audio clip"
+                        style={{ background: "transparent", border: 0, color: "var(--care-red)", cursor: "pointer", display: "grid", placeItems: "center" }}
+                      >
+                        <X size={17} />
+                      </button>
+                    </div>
                   )}
+                </div>
 
+                <div style={{ display: "flex", justifyContent: "flex-end", marginTop: "18px" }}>
                   <Button
                     type="button"
                     className="record-btn"
-                    style={{ marginLeft: "auto", background: "var(--care-navy)", color: "#fff" }}
+                    style={{ background: "var(--care-navy)", color: "#fff" }}
                     onClick={handleSaveCustomVoice}
                     disabled={!newMemberName.trim()}
                   >
@@ -875,7 +995,10 @@ function MindCare() {
                       <div key={voice.id} className="voice-item-row">
                         <div className="voice-item-detail">
                           <strong>{voice.name} ({voice.relation})</strong>
-                          <span>"{voice.prompt}" {voice.audioData ? "• 🎙️ Recorded Audio" : "• 🗣️ Synthesized Voice"}</span>
+                          <span>"{voice.prompt}" {voice.audioFileName ? `• 📁 ${voice.audioFileName}` : voice.audioData ? "• 🎙️ Recorded Audio" : "• 🗣️ Synthesized Voice"}</span>
+                          {voice.description && (
+                            <p className="voice-item-desc">{voice.description}</p>
+                          )}
                         </div>
                         <div style={{ display: "flex", gap: "8px" }}>
                           <Button
@@ -1001,7 +1124,7 @@ function MindCare() {
                     {isVoiceListening ? "I’m listening…" : voiceSupported ? "Say their name or relation" : "You can say their name, or tap below"}
                   </p>
                   {voiceHintVisible && voiceFeedback !== "success" && (
-                    <p className="hint-line" role="status"><Info size={18} /> {currentVoice.hint}</p>
+                    <p className="hint-line" role="status"><Info size={18} /> {currentVoice.description || currentVoice.hint}</p>
                   )}
                   {voiceFeedback === "gentle" && (
                     <button

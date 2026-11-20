@@ -50,21 +50,26 @@ describe("MindCare family voices", () => {
     expect(voices[0]?.relation).toBe("Granddaughter");
   });
 
-  it("persists custom family voices in local storage", () => {
+  it("persists custom family voices in local storage with description and audio metadata", () => {
     const custom = [
       {
         id: "custom-1",
         name: "Aarav",
         relation: "Grandson",
+        description: "Your eldest grandson who loves playing carrom with you.",
         prompt: "Hello Dadu, how are you today?",
-        hint: "Your grandson Aarav.",
+        hint: "Your grandson Aarav who plays carrom with you.",
         aliases: ["aarav", "grandson", "pota"],
+        audioFileName: "aarav-voice.mp3",
       },
     ];
 
     saveFamilyVoices(custom);
 
-    expect(loadFamilyVoices()).toEqual(custom);
+    const loaded = loadFamilyVoices();
+    expect(loaded).toEqual(custom);
+    expect(loaded[0]?.description).toBe("Your eldest grandson who loves playing carrom with you.");
+    expect(loaded[0]?.audioFileName).toBe("aarav-voice.mp3");
     expect(window.localStorage.getItem(FAMILY_VOICES_STORAGE_KEY)).toBe(JSON.stringify(custom));
   });
 
