@@ -7,6 +7,72 @@ export type MemoryItem = {
   aliases: string[];
 };
 
+export type FamilyVoiceItem = {
+  id: string;
+  name: string;
+  relation: string;
+  prompt: string;
+  hint: string;
+  aliases: string[];
+  audioData?: string;
+  speechPitch?: number;
+};
+
+export const DEFAULT_FAMILY_VOICES: FamilyVoiceItem[] = [
+  {
+    id: "priya-granddaughter",
+    name: "Priya",
+    relation: "Granddaughter",
+    prompt: "Good morning Dadu! Have you had your warm cup of morning tea?",
+    hint: "She is your granddaughter who loves visiting and making tea for you.",
+    aliases: ["priya", "granddaughter", "grand daughter", "natni", "nati"],
+    speechPitch: 1.22,
+  },
+  {
+    id: "rahul-son",
+    name: "Rahul",
+    relation: "Son",
+    prompt: "Namaste Baba! Did you go for your gentle afternoon walk today?",
+    hint: "Your loving son who always checks in on your daily walk.",
+    aliases: ["rahul", "son", "beta", "putra"],
+    speechPitch: 0.95,
+  },
+  {
+    id: "ananya-daughter",
+    name: "Ananya",
+    relation: "Daughter",
+    prompt: "Hello Ma! I am preparing your favourite sweet dish for this weekend.",
+    hint: "Your caring daughter who loves bringing home-cooked sweets.",
+    aliases: ["ananya", "daughter", "beti", "jiya"],
+    speechPitch: 1.15,
+  },
+];
+
+export const FAMILY_VOICES_STORAGE_KEY = "mindcare-family-voices";
+
+export function loadFamilyVoices(): FamilyVoiceItem[] {
+  if (typeof window === "undefined") return DEFAULT_FAMILY_VOICES;
+
+  try {
+    const stored = window.localStorage.getItem(FAMILY_VOICES_STORAGE_KEY);
+    if (!stored) return DEFAULT_FAMILY_VOICES;
+    const parsed = JSON.parse(stored) as FamilyVoiceItem[];
+    return Array.isArray(parsed) && parsed.length > 0 ? parsed : DEFAULT_FAMILY_VOICES;
+  } catch {
+    return DEFAULT_FAMILY_VOICES;
+  }
+}
+
+export function saveFamilyVoices(voices: FamilyVoiceItem[]) {
+  if (typeof window === "undefined") return;
+
+  try {
+    window.localStorage.setItem(FAMILY_VOICES_STORAGE_KEY, JSON.stringify(voices));
+  } catch {
+    // Falls back to session memory if storage is unavailable.
+  }
+}
+
 export type ReminderKey = "medicine" | "water" | "walk";
 export type ReminderState = Partial<Record<ReminderKey, boolean>>;
 
